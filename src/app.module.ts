@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductModule } from './product/product.module';
+import { ClsModule } from 'nestjs-cls';
 
 @Module({
   imports: [
@@ -22,6 +23,12 @@ import { ProductModule } from './product/product.module';
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
+    }),
+    ClsModule.forRoot({
+      global: true,
+      middleware: {
+        mount: true,
+      },
     }),
     AuthModule,
     UserModule,
