@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
@@ -22,13 +28,21 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException({
+        message: `User with username ${dto.username} not found`,
+        error: 'Not Found',
+        data: null,
+      });
     }
 
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new UnauthorizedException({
+        message: 'Invalid password',
+        error: 'Unauthorized',
+        data: null,
+      });
     }
 
     const token = this.generateToken(user);
@@ -48,7 +62,11 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new Error('Username already exists');
+      throw new ConflictException({
+        message: `Username already exists`,
+        error: 'Bad Request',
+        data: null,
+      });
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -78,7 +96,11 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException({
+        message: `User with id ${id} not found`,
+        error: 'Not Found',
+        data: null,
+      });
     }
 
     return {

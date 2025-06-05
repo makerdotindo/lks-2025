@@ -24,7 +24,11 @@ export class UserGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Invalid or missing token');
+      throw new UnauthorizedException({
+        message: 'Invalid or missing token',
+        error: 'Unauthorized',
+        data: null,
+      });
     }
 
     const token = authHeader.split(' ')[1];
@@ -36,7 +40,11 @@ export class UserGuard implements CanActivate {
       this.clsService.set('user', decoded);
       return true;
     } catch (error) {
-      throw new UnauthorizedException('Invalid or expired token');
+      throw new UnauthorizedException({
+        message: 'Invalid or expired token',
+        error: 'Unauthorized',
+        data: null,
+      });
     }
   }
 }
@@ -57,7 +65,11 @@ export class AdminGuard implements CanActivate {
     if (adminPassword && adminPassword === adminPasswordEnv) {
       return true;
     } else {
-      throw new UnauthorizedException('Invalid or missing admin password');
+      throw new UnauthorizedException({
+        message: 'Admin access denied',
+        error: 'Unauthorized',
+        data: null,
+      });
     }
   }
 }

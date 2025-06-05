@@ -35,7 +35,11 @@ export class ProductService {
     const products = await this.productRepo.find();
 
     if (products.length === 0) {
-      throw new NotFoundException('No products found');
+      throw new NotFoundException({
+        message: 'No products found',
+        error: 'Not Found',
+        data: null,
+      });
     }
 
     return {
@@ -51,7 +55,11 @@ export class ProductService {
     });
 
     if (!product) {
-      throw new NotFoundException(`Product with id ${id} not found`);
+      throw new NotFoundException({
+        message: `Product with id ${id} not found`,
+        error: 'Not Found',
+        data: null,
+      });
     }
 
     return {
