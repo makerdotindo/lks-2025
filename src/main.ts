@@ -24,7 +24,7 @@ async function bootstrap() {
     .setTitle('LKS API 2025')
     .setDescription('API documentation for LKS 2025')
     .setVersion('1.0.0')
-    .addServer('http://localhost:3000', 'Development Server')
+    .addServer('https://lks.makeredu.id', 'API Server')
     .addBearerAuth(
       {
         type: 'http',
