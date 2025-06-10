@@ -11,6 +11,30 @@ import { ClsService } from 'nestjs-cls';
 import { Observable } from 'rxjs';
 
 @Injectable()
+export class APIGuard implements CanActivate {
+  constructor(private configService: ConfigService) {}
+
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest<Request>();
+
+    const adminPassword = request.headers['x-api-key'];
+    const adminPasswordEnv = this.configService.getOrThrow<string>('API_KEY');
+
+    if (adminPassword && adminPassword === adminPasswordEnv) {
+      return true;
+    } else {
+      throw new UnauthorizedException({
+        message: 'Access denied',
+        error: 'Unauthorized',
+        data: null,
+      });
+    }
+  }
+}
+
+@Injectable()
 export class UserGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,

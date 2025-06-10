@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
-import { UserGuard } from './auth.guard';
+import { APIGuard, UserGuard } from './auth.guard';
 import { LoggerService } from '@/logger/logger.service';
 import { Request } from 'express';
 
@@ -29,6 +29,7 @@ export class AuthController {
       },
     },
   })
+  @UseGuards(APIGuard)
   @Post('login')
   login(@Req() req: Request, @Body() dto: LoginDto) {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -54,6 +55,7 @@ export class AuthController {
       },
     },
   })
+  @UseGuards(APIGuard)
   @Post('register')
   register(@Req() req: Request, @Body() dto: RegisterDto) {
     const Ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -83,7 +85,7 @@ export class AuthController {
       },
     },
   })
-  @UseGuards(UserGuard)
+  @UseGuards(APIGuard, UserGuard)
   @Get('profile')
   getProfile(@Req() req: Request) {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;

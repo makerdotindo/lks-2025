@@ -19,7 +19,7 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { AdminGuard, UserGuard } from '@/auth/auth.guard';
+import { AdminGuard, APIGuard, UserGuard } from '@/auth/auth.guard';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -70,7 +70,7 @@ export class ProductController {
       },
     },
   })
-  @UseGuards(UserGuard)
+  @UseGuards(APIGuard, UserGuard)
   @Get()
   findAll(@Req() req: Request) {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -81,7 +81,7 @@ export class ProductController {
     return this.productService.findAll();
   }
 
-  @UseGuards(UserGuard)
+  @UseGuards(APIGuard, UserGuard)
   @Get(':id')
   findOne(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
