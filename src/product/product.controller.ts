@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   ParseIntPipe,
+  Ip,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,14 +23,17 @@ import { AdminGuard, UserGuard } from '@/auth/auth.guard';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductEntity } from './entities/product.entity';
-import { ProductResponseDto } from './dto/response.dto';
+import { LoggerService } from '@/logger/logger.service';
+import { Request } from 'express';
 
 @ApiTags('Products')
 @ApiBearerAuth('Token')
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly loggerService: LoggerService,
+  ) {}
 
   @ApiExcludeEndpoint()
   @UseGuards(AdminGuard)
@@ -67,13 +72,23 @@ export class ProductController {
   })
   @UseGuards(UserGuard)
   @Get()
-  findAll() {
+  findAll(@Req() req: Request) {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const userAgent = req.headers['user-agent'] || 'Unknown User Agent';
+    this.loggerService.log(
+      `[IP: ${ip}] : [User Agent: ${userAgent}] : /products : user requested product list`,
+    );
     return this.productService.findAll();
   }
 
   @UseGuards(UserGuard)
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const userAgent = req.headers['user-agent'] || 'Unknown User Agent';
+    this.loggerService.log(
+      `[IP: ${ip}] : [User Agent: ${userAgent}] : /products/${id} : user requested product details for ID ${id}`,
+    );
     return this.productService.findOne(id);
   }
 

@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductModule } from './product/product.module';
 import { ClsModule } from 'nestjs-cls';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ClsModule } from 'nestjs-cls';
         mount: true,
       },
     }),
+    LoggerModule,
     AuthModule,
     UserModule,
     ProductModule,
